@@ -1,0 +1,16 @@
+package org.soframel.parktris.parktrisserver
+
+import org.springframework.boot.SpringApplication
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
+
+@SpringBootApplication
+@EnableMongoRepositories
+class ParktrisServerApplication{
+    
+
+}
+
+fun main(args: Array<String>) {
+    SpringApplication.run(ParktrisServerApplication::class.java, *args)
+}
