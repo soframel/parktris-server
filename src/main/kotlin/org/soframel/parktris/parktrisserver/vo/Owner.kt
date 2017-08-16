@@ -4,6 +4,6 @@ import org.springframework.data.annotation.Id
 
 class Owner () {
     @Id
-    var userId: String=""
-    var ownedSlotsIds: MutableList<String> = mutableListOf()
+    lateinit var userId: String
+    var ownedSlotsIds: MutableList<String>?=null
 }

@@ -4,8 +4,8 @@ import org.springframework.data.annotation.Id
 
 class ParkingSlot() {
     @Id
-    var id: String=""
-    var name: String=""
+    lateinit var id: String
+    lateinit var name: String
     var desc: String?=""
-    var area: ParkingArea=ParkingArea()
+    lateinit var area: ParkingArea
 }
