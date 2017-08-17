@@ -1,7 +1,6 @@
-package org.soframel.parktris.parktrisserver.services
+package org.soframel.parktris.parktrisserver.security
 
 import org.soframel.parktris.parktrisserver.repositories.UserRepository
-import org.soframel.parktris.parktrisserver.vo.User
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.GrantedAuthority
@@ -9,10 +8,9 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
-import org.springframework.web.bind.annotation.RestController
 
 @Service
-class UserService : UserDetailsService {
+class UserDetailsService : UserDetailsService {
 
     @Autowired
     lateinit var userRepo: UserRepository
