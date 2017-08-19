@@ -18,19 +18,19 @@ class UserDetailsService : UserDetailsService {
     @Value("\${parktris.server.admins}")
     lateinit var adminLogins: String
 
-    fun login(email: String, password: String): Boolean{
-        var user=userRepo.findByEmail(email)
-       return false
-    }
-
-
     override fun loadUserByUsername(username: String): UserDetails
      {
         var user = userRepo.findByEmail(username)
         if (user == null) {
             throw UsernameNotFoundException("Username " + username + " not found")
         }
-        return org.springframework.security.core.userdetails.User(username, "password", getGrantedAuthorities(username))
+         //check user is enabled
+         if(user.enabled) {
+             return org.springframework.security.core.userdetails.User(username, user.password, getGrantedAuthorities(username))
+         }
+         else{
+             throw UsernameNotFoundException("User is not enabled: ${username}")
+         }
     }
 
 

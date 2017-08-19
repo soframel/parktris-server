@@ -22,10 +22,12 @@ class SecurityConfiguration : WebSecurityConfigurerAdapter() {
 
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
-        http.authorizeRequests().anyRequest().fullyAuthenticated()
+        http.authorizeRequests()
+                .anyRequest().fullyAuthenticated()
+                .antMatchers("/unauth").permitAll()
         http.httpBasic()
         http.csrf().disable()
-
+        
     }
 
     @Throws(Exception::class)

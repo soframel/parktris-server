@@ -1,14 +1,25 @@
 package org.soframel.parktris.parktrisserver.vo
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import org.soframel.parktris.parktrisserver.security.BCryptPasswordDeserializer
 import org.springframework.data.annotation.Id
 import org.springframework.data.rest.core.annotation.RestResource
 
-class User() {
-    @Id var id: String=""
-    lateinit var email: String
+class User  {
+    
+    @Id var id: String?=""
+    var email: String?=""
+
+    var fullName: String?=""
 
     @RestResource(exported = false)
-    lateinit var password: String
+    @JsonDeserialize(using = BCryptPasswordDeserializer::class )
+    var password: String?=""
 
     var enabled: Boolean=false
+    override fun toString(): String {
+        return "User(id='$id', email='$email', fullName='$fullName', password='$password', enabled=$enabled)"
+    }
+
+
 }
