@@ -1,5 +1,6 @@
 package org.soframel.parktris.parktrisserver
 
+import com.mongodb.MockMongoClient
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.soframel.parktris.parktrisserver.repositories.ParkingAreaRepository
@@ -8,34 +9,31 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.ApplicationContext
 import org.springframework.test.context.junit4.SpringRunner
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
+
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
-class ParktrisServerApplicationTests : AbstractFongoTest() {
+class FongoLoadsPropertlyTest : AbstractFongoTest() {
 
     @Autowired
     lateinit var appContext: ApplicationContext
 
-	@Test
-	fun contextLoads() {
-        var areaRepo=appContext.getBean(ParkingAreaRepository::class.java)
-		assertNotNull(areaRepo)
+
+    @Autowired
+    lateinit var parkingAreaRepository: ParkingAreaRepository
+
+
+    @Test
+    fun testFongoLoaded() {
+        val bean = appContext.getBean("mongo")
+        assertTrue(bean is MockMongoClient)
     }
 
     @Test
-    fun tetstParkingAreaRepository() {
-		var areaRepo=appContext.getBean(ParkingAreaRepository::class.java)
-
-        areaRepo.deleteAll();
-
-		var area = ParkingArea()
-		area.name="-2"
-
-		areaRepo.save(area)
-
-		assertEquals(1, areaRepo.findAll().size)
+    fun testSimpleInsert() {
+        parkingAreaRepository.count()
+        parkingAreaRepository.insert(ParkingArea())
+        assert(parkingAreaRepository.count() == 1L)
     }
-
 }
