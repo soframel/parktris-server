@@ -6,7 +6,7 @@
 	<groupId>org.soframel.parktris</groupId>
 	<artifactId>parktris-server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<name>parktris-server</name>
 	<description>Demo project for Spring Boot</description>
@@ -61,6 +61,14 @@
 			<version>${kotlin.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<!--Should have been provided because Tomcat brings its own, but then standalone SpringBoot doesn't work.
+			There's still chances this will create conflicts with Tomcat later on some day... -->
+			<!--<scope>provided</scope>-->
+		</dependency>
+
 		<!--test-->
 		<dependency>
 			<groupId>com.lordofthejars</groupId>
@@ -106,6 +114,7 @@
 	<build>
 		<sourceDirectory>src/main/kotlin</sourceDirectory>
 		<testSourceDirectory>src/test/kotlin</testSourceDirectory>
+		<finalName>${project.name}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
