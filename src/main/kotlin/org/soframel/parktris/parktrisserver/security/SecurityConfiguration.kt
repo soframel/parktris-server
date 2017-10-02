@@ -11,6 +11,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.config.annotation.web.builders.WebSecurity
+
+
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -24,11 +27,18 @@ class SecurityConfiguration : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
         http.authorizeRequests()
                 .anyRequest().fullyAuthenticated()
-                .antMatchers("/unauth").permitAll()
         http.httpBasic()
         http.csrf().disable()
         
     }
+
+    @Throws(Exception::class)
+    override fun configure(web: WebSecurity?) {
+        web!!
+                .ignoring()
+                .antMatchers("/unauth/**")
+    }
+
 
     @Throws(Exception::class)
     override fun configure(auth: AuthenticationManagerBuilder?) {
