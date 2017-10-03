@@ -45,11 +45,12 @@ class InitialConfigurator : InitializingBean {
             var pass = generateRandom()
             logger.warn("password is '${pass}'")
             var user = User()
+            user.id = null //let it be auto generated
             user.email = adminEmail
             user.fullName="Administrator"
             user.enabled=true
             user.password=securityConfig.encoder().encode(pass)
-            userRepo.save(user)
+            userRepo.insert(user)
         }
     }
 
