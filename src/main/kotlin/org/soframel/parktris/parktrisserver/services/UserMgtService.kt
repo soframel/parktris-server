@@ -52,13 +52,10 @@ class UserMgtService{
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User with email ${user.email} already exists")
         }
         else {
-            /*var user = User()
-            user.email = email
-            user.fullName=fullName;
-            user.password = secu.encoder().encode(password)  */
-            user.password= secu.encoder().encode(user.password)
+            // our friend Spring should already have encrypted user.password at this point, so don't change it
+            user.id = null //set to null to let it be generated to prevent overriding on purpose
             user.enabled=false
-            var user2 = userRepo.save(user)
+            userRepo.insert(user)
             return ResponseEntity.status(HttpStatus.OK).body("User with email ${user.email} created. It must now be enabled by an administrator")
         }
     }
