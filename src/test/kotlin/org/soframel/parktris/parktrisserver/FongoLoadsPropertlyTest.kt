@@ -8,12 +8,14 @@ import org.soframel.parktris.parktrisserver.vo.ParkingArea
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.ApplicationContext
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.junit4.SpringRunner
 import kotlin.test.assertTrue
 
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
+@DirtiesContext
 class FongoLoadsPropertlyTest : AbstractFongoTest() {
 
     @Autowired
