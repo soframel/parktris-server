@@ -23,40 +23,40 @@ class UserMgtService{
     @Autowired
     lateinit var userRepo: UserRepository
 
-    @RequestMapping(value="/userMgt/{email}", method = arrayOf(RequestMethod.GET))
-    fun findByEmail(@PathVariable email: String): User{
-        return userRepo.findByEmail(email)
+    @RequestMapping(value="/userMgt/{login}", method = arrayOf(RequestMethod.GET))
+    fun findByLogin(@PathVariable login: String): User{
+        return userRepo.findByLogin(login)
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value="/userMgt/enableUser/{email}", method = arrayOf(RequestMethod.PUT))
-    fun enableUser(@PathVariable email: String): ResponseEntity<String>{
-          var user=userRepo.findByEmail(email)
+    @RequestMapping(value="/userMgt/enableUser/{login}", method = arrayOf(RequestMethod.PUT))
+    fun enableUser(@PathVariable login: String): ResponseEntity<String>{
+          var user=userRepo.findByLogin(login)
         if(user!=null){
             user.enabled=true
             val user2=userRepo.save(user)
-            return ResponseEntity.status(HttpStatus.OK).body("User with email ${email} enabled")
+            return ResponseEntity.status(HttpStatus.OK).body("User with login ${login} enabled")
         }
         else{
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found with this email: ${email}")
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found with this login: ${login}")
         }
     }
 
     @RequestMapping(value="/unauth/user", method=arrayOf(RequestMethod.POST))
     fun createUser(@RequestBody user: User): ResponseEntity<String>{
         logger.info("creating user ${user}")
-        if(user.email==null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User must have an email")
+        if(user.login==null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User must have a login")
         }
-        else if(userRepo.findByEmail(user.email!!)!=null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User with email ${user.email} already exists")
+        else if(userRepo.findByLogin(user.login!!)!=null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User with login ${user.login} already exists")
         }
         else {
             // our friend Spring should already have encrypted user.password at this point, so don't change it
             user.id = null //set to null to let it be generated to prevent overriding on purpose
             user.enabled=false
             userRepo.insert(user)
-            return ResponseEntity.status(HttpStatus.OK).body("User with email ${user.email} created. It must now be enabled by an administrator")
+            return ResponseEntity.status(HttpStatus.OK).body("User with login ${user.login} created. It must now be enabled by an administrator")
         }
     }
 }

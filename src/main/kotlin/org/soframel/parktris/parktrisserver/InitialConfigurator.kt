@@ -3,20 +3,17 @@ package org.soframel.parktris.parktrisserver
 import org.apache.log4j.Logger
 import org.soframel.parktris.parktrisserver.repositories.UserRepository
 import org.soframel.parktris.parktrisserver.security.SecurityConfiguration
+import org.soframel.parktris.parktrisserver.security.UserDetailsService
 import org.soframel.parktris.parktrisserver.vo.User
-import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.context.event.ContextRefreshedEvent
 import org.springframework.context.event.EventListener
-import java.nio.charset.Charset
-import java.util.*
 import java.util.Random
 
 
 @Component
-class InitialConfigurator : InitializingBean {
+class InitialConfigurator {
 
     var logger = Logger.getLogger(InitialConfigurator::class.java)
 
@@ -26,27 +23,20 @@ class InitialConfigurator : InitializingBean {
     @Autowired
     lateinit var securityConfig: SecurityConfiguration
 
-    @Value("\${parktris.server.admins}")
-    lateinit var adminEmail: String
-
-    override fun afterPropertiesSet() {
-        if (adminEmail.contains(",", false)) {
-            logger.info("cropped admin email to ${adminEmail}")
-            adminEmail = adminEmail.substring(0, adminEmail.indexOf(",")).trim()
-        }
-    }
-
+    @Autowired
+    lateinit var userDetailsService: UserDetailsService
 
     @EventListener(ContextRefreshedEvent::class)
     fun contextRefreshedEvent() {
 
-        if (userRepo.findByEmail(adminEmail) == null) {
+        if (userRepo.findByLogin(userDetailsService.firstAdminLogin) == null) {
             logger.warn("No admin user - generating one")
             var pass = generateRandom()
             logger.warn("password is '${pass}'")
             var user = User()
             user.id = null //let it be auto generated
-            user.email = adminEmail
+            user.login=userDetailsService.firstAdminLogin
+            user.email = userDetailsService.firstAdminEmail
             user.fullName="Administrator"
             user.enabled=true
             user.password=securityConfig.encoder().encode(pass)

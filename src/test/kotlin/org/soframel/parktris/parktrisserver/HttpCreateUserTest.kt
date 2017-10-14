@@ -9,6 +9,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.soframel.parktris.parktrisserver.repositories.UserRepository
 import org.soframel.parktris.parktrisserver.security.SecurityConfiguration
+import org.soframel.parktris.parktrisserver.security.UserDetailsService
 import org.soframel.parktris.parktrisserver.vo.User
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -31,11 +32,11 @@ class HttpCreateUserTest : AbstractFongoTest() {
     @Autowired
     lateinit var securityConfig: SecurityConfiguration
 
+    @Autowired
+    lateinit var userDetailsService: UserDetailsService
+
     @Value("\${local.server.port}")
     var port: Int = 0
-
-    @Value("\${parktris.server.admins}")
-    lateinit var adminEmail: String
 
     val adminPassword = "catalan"
 
@@ -43,7 +44,7 @@ class HttpCreateUserTest : AbstractFongoTest() {
 	@Before
     fun setUp() {
 
-        val admin = userRepository.findByEmail(adminEmail)
+        val admin = userRepository.findByLogin(userDetailsService.firstAdminLogin)
         admin.password = securityConfig.encoder().encode(adminPassword)
         userRepository.save(admin)
 
@@ -59,7 +60,9 @@ class HttpCreateUserTest : AbstractFongoTest() {
         //Create a new user anonymously
         val user = User()
         user.id = ""
+        val lilysLogin="lily"
         val lilysEmail = "lily@test.lu"
+        user.login=lilysLogin
         user.email = lilysEmail
         user.password = "something"
 
@@ -73,18 +76,18 @@ class HttpCreateUserTest : AbstractFongoTest() {
                 .statusCode(200).log().all();
 
         //Access to resources should be disabled even tho the user is existing
-        RestAssured.authentication = RestAssured.basic(user.email, user.password)
+        RestAssured.authentication = RestAssured.basic(user.login, user.password)
         RestAssured.`when`().get("/loan")
                 .then().statusCode(401)
 
 
         //Act as the admin and enable user
-        val lily = userRepository.findByEmail(lilysEmail)
+        val lily = userRepository.findByLogin(lilysLogin)
         lily.enabled = true
         userRepository.save(lily)
 
         //Access should be OK now
-        RestAssured.authentication = RestAssured.basic(user.email, user.password)
+        RestAssured.authentication = RestAssured.basic(user.login, user.password)
         RestAssured.`when`().get("/")
                 .then().statusCode(200)
 

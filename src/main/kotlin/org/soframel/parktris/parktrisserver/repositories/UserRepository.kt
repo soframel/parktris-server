@@ -9,6 +9,6 @@ import org.springframework.security.access.prepost.PreAuthorize
 
 @RepositoryRestResource( exported = false)
 interface UserRepository : MongoRepository<User, String> {
-    fun findByEmail(@Param("email") email: String): User
+    fun findByLogin(@Param("login") login: String): User
 
 }
