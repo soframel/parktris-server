@@ -11,7 +11,6 @@ import org.springframework.context.event.ContextRefreshedEvent
 import org.springframework.context.event.EventListener
 import java.util.Random
 
-
 @Component
 class InitialConfigurator {
 
@@ -24,6 +23,8 @@ class InitialConfigurator {
     lateinit var securityConfig: SecurityConfiguration
 
     @Autowired
+    lateinit var passwordGenerator : PasswordGenerator
+    @Autowired
     lateinit var userDetailsService: UserDetailsService
 
     @EventListener(ContextRefreshedEvent::class)
@@ -31,7 +32,7 @@ class InitialConfigurator {
 
         if (userRepo.findByLogin(userDetailsService.firstAdminLogin) == null) {
             logger.warn("No admin user - generating one")
-            var pass = generateRandom()
+            var pass = passwordGenerator.generate()
             logger.warn("password is '${pass}'")
             var user = User()
             user.id = null //let it be auto generated
@@ -44,18 +45,5 @@ class InitialConfigurator {
         }
     }
 
-
-    fun generateRandom(): String {
-        val leftLimit = 48 // number '0'
-        val rightLimit = 122 // letter 'z'
-        val targetStringLength = 10
-        val random = Random()
-        val buffer = StringBuilder(targetStringLength)
-        for (i in 0..targetStringLength - 1) {
-            val randomLimitedInt = leftLimit + (random.nextFloat() * (rightLimit - leftLimit + 1)).toInt()
-            buffer.append(randomLimitedInt.toChar())
-        }
-        return buffer.toString()
-    }
 
 }

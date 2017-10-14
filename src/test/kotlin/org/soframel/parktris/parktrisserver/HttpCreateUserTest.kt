@@ -15,9 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.ApplicationContext
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.junit4.SpringRunner
 
+@ActiveProfiles("test")
 @RunWith(SpringRunner::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext
@@ -33,6 +35,8 @@ class HttpCreateUserTest : AbstractFongoTest() {
     lateinit var securityConfig: SecurityConfiguration
 
     @Autowired
+    lateinit var passwordGenerator : PasswordGenerator
+    @Autowired
     lateinit var userDetailsService: UserDetailsService
 
     @Value("\${local.server.port}")
@@ -43,18 +47,14 @@ class HttpCreateUserTest : AbstractFongoTest() {
 
 	@Before
     fun setUp() {
-
         val admin = userRepository.findByLogin(userDetailsService.firstAdminLogin)
         admin.password = securityConfig.encoder().encode(adminPassword)
         userRepository.save(admin)
 
-
         RestAssured.port = port
     }
 
-    /*Test creation of a user.
-    * Currently not working, looks like you need to be authenticated to call /unauth/user.
-    * */
+    /*Test creation of a user. */
     @Test
     fun testCreateUser() {
         //Create a new user anonymously
