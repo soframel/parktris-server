@@ -10,9 +10,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.context.event.ContextRefreshedEvent
 import org.springframework.context.event.EventListener
-import java.nio.charset.Charset
-import java.util.*
-import java.util.Random
 
 
 @Component
@@ -25,6 +22,9 @@ class InitialConfigurator : InitializingBean {
 
     @Autowired
     lateinit var securityConfig: SecurityConfiguration
+
+    @Autowired
+    lateinit var passwordGenerator : PasswordGenerator
 
     @Value("\${parktris.server.admins}")
     lateinit var adminEmail: String
@@ -42,7 +42,7 @@ class InitialConfigurator : InitializingBean {
 
         if (userRepo.findByEmail(adminEmail) == null) {
             logger.warn("No admin user - generating one")
-            var pass = generateRandom()
+            var pass = passwordGenerator.generate()
             logger.warn("password is '${pass}'")
             var user = User()
             user.id = null //let it be auto generated
@@ -54,18 +54,5 @@ class InitialConfigurator : InitializingBean {
         }
     }
 
-
-    fun generateRandom(): String {
-        val leftLimit = 48 // number '0'
-        val rightLimit = 122 // letter 'z'
-        val targetStringLength = 10
-        val random = Random()
-        val buffer = StringBuilder(targetStringLength)
-        for (i in 0..targetStringLength - 1) {
-            val randomLimitedInt = leftLimit + (random.nextFloat() * (rightLimit - leftLimit + 1)).toInt()
-            buffer.append(randomLimitedInt.toChar())
-        }
-        return buffer.toString()
-    }
 
 }

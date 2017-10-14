@@ -14,8 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.ApplicationContext
+import org.springframework.context.annotation.Profile
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 
+@ActiveProfiles("test")
 @RunWith(SpringRunner::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class HttpSecurityTest : AbstractFongoTest() {
@@ -28,6 +31,9 @@ class HttpSecurityTest : AbstractFongoTest() {
 
     @Autowired
     lateinit var securityConfig: SecurityConfiguration
+
+    @Autowired
+    lateinit var passwordGenerator : PasswordGenerator
 
     @Value("\${local.server.port}")
     var port: Int = 0
@@ -66,14 +72,25 @@ class HttpSecurityTest : AbstractFongoTest() {
 
     }
 
+    /*Test access NOK if authenticated but not enabled user */
+    @Test
+    fun testDisabledUserAccess() {
+        user = User()
+        user.email = "user2@test.lu"
+        user.password=securityConfig.encoder().encode(passwuert)
+        user.enabled=false
+        userRepository.save(user)
+        RestAssured.authentication = basic(user.email, passwuert)
+        `when`().get("/")
+                .then().statusCode(401)
+
+    }
+
     /*Test Admin access OK*/
     @Test
     fun testAdminAccess(){
-        val admin = userRepository.findByEmail(adminEmail)
-        admin.password = securityConfig.encoder().encode(passwuert)
-        userRepository.save(admin)
 
-        RestAssured.authentication = RestAssured.basic(adminEmail, passwuert)
+        RestAssured.authentication = RestAssured.basic(adminEmail, passwordGenerator.generate())
         RestAssured.`when`().get("/")
                 .then().statusCode(200)
     }
