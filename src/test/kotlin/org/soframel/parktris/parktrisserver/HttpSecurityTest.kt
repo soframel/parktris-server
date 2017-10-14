@@ -94,7 +94,7 @@ class HttpSecurityTest : AbstractFongoTest() {
     @Test
     fun testAdminAccess(){
 
-        RestAssured.authentication = RestAssured.basic(adminEmail, passwordGenerator.generate())
+        RestAssured.authentication = RestAssured.basic(userDetailsService.firstAdminLogin, passwordGenerator.generate())
 
         val admin = userRepository.findByLogin(userDetailsService.firstAdminLogin)
         admin.password = securityConfig.encoder().encode(passwuert)

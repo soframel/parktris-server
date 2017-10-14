@@ -49,9 +49,6 @@ class HttpParkingSlotDeclarationTest : AbstractFongoTest() {
     @Value("\${local.server.port}")
     var port: Int = 0
 
-    @Value("\${parktris.server.admins}")
-    lateinit var adminEmail: String
-
     @Autowired
     lateinit var userRepository: UserRepository
 
@@ -76,6 +73,7 @@ class HttpParkingSlotDeclarationTest : AbstractFongoTest() {
         serverUrl = "http://localhost:" + port
 
         val user = User()
+        user.login=username
         user.email = username
         user.password = securityConfig.encoder().encode(password)
         user.enabled = true
