@@ -9,6 +9,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.soframel.parktris.parktrisserver.repositories.UserRepository
 import org.soframel.parktris.parktrisserver.security.SecurityConfiguration
+import org.soframel.parktris.parktrisserver.security.UserDetailsService
 import org.soframel.parktris.parktrisserver.vo.User
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -16,11 +17,13 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Profile
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.junit4.SpringRunner
 
 @ActiveProfiles("test")
 @RunWith(SpringRunner::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@DirtiesContext
 class HttpSecurityTest : AbstractFongoTest() {
 
     @Autowired
@@ -35,11 +38,11 @@ class HttpSecurityTest : AbstractFongoTest() {
     @Autowired
     lateinit var passwordGenerator : PasswordGenerator
 
+    @Autowired
+    lateinit var userDetailsService: UserDetailsService
+
     @Value("\${local.server.port}")
     var port: Int = 0
-
-    @Value("\${parktris.server.admins}")
-    lateinit var adminEmail: String
 
     lateinit var user : User
     var passwuert = "weTypeCodeNotArt"
@@ -62,11 +65,12 @@ class HttpSecurityTest : AbstractFongoTest() {
     @Test
     fun testUserAccess() {
         user = User()
+        user.login = "user"
         user.email = "user@test.lu"
         user.password=securityConfig.encoder().encode(passwuert)
         user.enabled=true
         userRepository.save(user)
-        RestAssured.authentication = basic(user.email, passwuert)
+        RestAssured.authentication = basic(user.login, passwuert)
         `when`().get("/")
                 .then().statusCode(200)
 
@@ -91,6 +95,13 @@ class HttpSecurityTest : AbstractFongoTest() {
     fun testAdminAccess(){
 
         RestAssured.authentication = RestAssured.basic(adminEmail, passwordGenerator.generate())
+
+        val admin = userRepository.findByLogin(userDetailsService.firstAdminLogin)
+        admin.password = securityConfig.encoder().encode(passwuert)
+        userRepository.save(admin)
+
+        RestAssured.authentication = RestAssured.basic(userDetailsService.firstAdminLogin, passwuert)
+
         RestAssured.`when`().get("/")
                 .then().statusCode(200)
     }

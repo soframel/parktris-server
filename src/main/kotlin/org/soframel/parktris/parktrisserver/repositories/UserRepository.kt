@@ -7,6 +7,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource
 
 @RepositoryRestResource( exported = false)
 interface UserRepository : MongoRepository<User, String> {
-    fun findByEmail(@Param("email") email: String): User
+
     fun findAllByIdIsNotNull(): List<User>
+    fun findByLogin(@Param("login") login: String): User
 }
