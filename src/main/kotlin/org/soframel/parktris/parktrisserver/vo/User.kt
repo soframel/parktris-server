@@ -7,10 +7,10 @@ import org.springframework.data.rest.core.annotation.RestResource
 
 class User  {
     
-    @Id var id: String?=""
+    @Id
+    var id: String? =null
     var login: String?=""
     var email: String?=""
-
     var fullName: String?=""
 
     @RestResource(exported = false)

@@ -5,10 +5,10 @@ import java.time.LocalDate
 
 class Loan () {
     @Id
-    lateinit var id: String
-    lateinit var ownerId: String
-    lateinit var tenantId: String
-    lateinit var slotId: String
-    lateinit var startDate: LocalDate
-    lateinit var endDate: LocalDate
+    var id: String?=null
+    var owner: String?=null
+    var tenant: String?=null
+    var slotId: String?=null
+    var startDate: LocalDate?=null
+    var endDate: LocalDate?=null
 }

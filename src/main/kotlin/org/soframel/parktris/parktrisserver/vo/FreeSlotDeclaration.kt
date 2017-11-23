@@ -5,9 +5,9 @@ import java.time.LocalDate
 
 class FreeSlotDeclaration() {
     @Id
-    lateinit var id: String
-    lateinit var slotId: String
-    lateinit var startDate: LocalDate
-    lateinit var endDate: LocalDate
-    var preferedTenantId: String? =null
+    var id: String?=null
+    var slotId: String?=null
+    var startDate: LocalDate?=null
+    var endDate: LocalDate?=null
+    var preferedTenantId: String?=null
 }

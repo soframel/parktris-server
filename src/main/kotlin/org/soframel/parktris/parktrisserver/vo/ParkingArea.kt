@@ -6,7 +6,7 @@ import org.springframework.hateoas.Resources
 
 class ParkingArea()  {
     @Id
-    lateinit var id: String
-    lateinit var name: String
+    var id: String?=null
+    var name: String?=null
     var desc: String?=null
 }

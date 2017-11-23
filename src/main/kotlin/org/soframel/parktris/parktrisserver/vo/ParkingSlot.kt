@@ -4,8 +4,10 @@ import org.springframework.data.annotation.Id
 import org.springframework.hateoas.ResourceSupport
 
 class ParkingSlot(){
-    lateinit var id: String
-    lateinit var name: String
+    @Id
+    var id: String?=null
+    var name: String?=""
     var desc: String?=""
     lateinit var area: ParkingArea
+    var owner: String?=null
 }

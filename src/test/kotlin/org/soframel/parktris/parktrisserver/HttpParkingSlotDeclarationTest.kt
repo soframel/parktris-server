@@ -90,11 +90,13 @@ class HttpParkingSlotDeclarationTest : AbstractFongoTest() {
         val slot = ParkingSlot()
         slot.name = "JL"
         slot.area = parkingArea25
+        slot.owner="mila"
         parkingSlotRepo.insert(slot)
 
         val slot2 = ParkingSlot()
         slot2.name = "Pat"
         slot2.area = parkingArea25
+        slot2.owner="admin"
         parkingSlotRepo.insert(slot2)
 
         RestAssured.port = port
@@ -124,6 +126,7 @@ class HttpParkingSlotDeclarationTest : AbstractFongoTest() {
         slot.area = area
         slot.desc = "038"
         slot.name = "Dave"
+        slot.owner="admin"
         slot.id = ""
 
         val slotResource = ParkingSlotResource()
