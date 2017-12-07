@@ -12,6 +12,9 @@ interface ParkingSlotRepository : MongoRepository<ParkingSlot, String> {
     fun findByName(@Param("name") name: String): ParkingSlot
     fun findAllByIdIsNotNull(): List<ParkingSlot>
 
-    @PreAuthorize("")
+    @PreAuthorize("#owner == principal.username")
     fun findAllByOwner(@Param("owner") owner: String): List<ParkingSlot>
+
+    @PreAuthorize("#slot.owner == principal.username ")
+    override fun <S : ParkingSlot?> save(@Param("slot") s: S): S
 }

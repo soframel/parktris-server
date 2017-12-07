@@ -89,13 +89,13 @@ class HttpParkingSlotDeclarationTest : AbstractFongoTest() {
 
         val slot = ParkingSlot()
         slot.name = "JL"
-        slot.area = parkingArea25
+        slot.areaId = parkingArea25.id
         slot.owner="mila"
         parkingSlotRepo.insert(slot)
 
         val slot2 = ParkingSlot()
         slot2.name = "Pat"
-        slot2.area = parkingArea25
+        slot2.areaId = parkingArea25.id
         slot2.owner="admin"
         parkingSlotRepo.insert(slot2)
 
@@ -123,10 +123,10 @@ class HttpParkingSlotDeclarationTest : AbstractFongoTest() {
         //create new parking slot
         area.id = "" //need to set something because of lateinit. anyway it should be overridden
         val slot = ParkingSlot()
-        slot.area = area
+        slot.areaId = area.id
         slot.desc = "038"
         slot.name = "Dave"
-        slot.owner="admin"
+        slot.owner=username
         slot.id = ""
 
         val slotResource = ParkingSlotResource()

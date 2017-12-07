@@ -103,7 +103,7 @@ class ExampleDataInserter : CommandLineRunner {
         parkingSlotRepo.deleteAll()
 
         slot.name = "1"
-        slot.area = parkingArea2
+        slot.areaId = parkingArea2.id
         slot.desc = "JL"
         slot.owner="mila"
         parkingSlotRepo.insert(slot)
@@ -112,13 +112,13 @@ class ExampleDataInserter : CommandLineRunner {
         slot2.name = "68"
         slot2.desc = "Pat"
         slot2.owner="mila"
-        slot2.area = parkingArea25
+        slot2.areaId = parkingArea25.id
         parkingSlotRepo.insert(slot2)
 
         slot3.name = "42"
         slot3.desc = "Ford"
         slot3.owner="admin"
-        slot3.area = parkingArea3
+        slot3.areaId = parkingArea3.id
         parkingSlotRepo.insert(slot3)
 
     }
