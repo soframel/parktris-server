@@ -9,5 +9,5 @@ class FreeSlotDeclaration() {
     var slotId: String?=null
     var startDate: LocalDate?=null
     var endDate: LocalDate?=null
-    var preferedTenantId: String?=null
+    var preferedTenant: String?=null
 }

@@ -65,14 +65,19 @@ class HttpParkingSlotDeclarationTest : AbstractFongoTest() {
     lateinit var password : String
     lateinit var serverUrl : String
 
+    lateinit var user: User
+    lateinit var adminUser: User
+
     @Before
     fun setUp() {
+
+        adminUser=userRepository.findByLogin("admin")
 
         username = "mila"
         password = "piplu"
         serverUrl = "http://localhost:" + port
 
-        val user = User()
+        user = User()
         user.login=username
         user.email = username
         user.password = securityConfig.encoder().encode(password)
@@ -90,13 +95,13 @@ class HttpParkingSlotDeclarationTest : AbstractFongoTest() {
         val slot = ParkingSlot()
         slot.name = "JL"
         slot.areaId = parkingArea25.id
-        slot.owner="mila"
+        slot.owner=user.login
         parkingSlotRepo.insert(slot)
 
         val slot2 = ParkingSlot()
         slot2.name = "Pat"
         slot2.areaId = parkingArea25.id
-        slot2.owner="admin"
+        slot2.owner=adminUser.login
         parkingSlotRepo.insert(slot2)
 
         RestAssured.port = port
@@ -117,16 +122,16 @@ class HttpParkingSlotDeclarationTest : AbstractFongoTest() {
         var area = ParkingArea()
         for (parkingAreaResource in allAreas.content) {
             area = parkingAreaResource.parkingArea;
-
         }
 
         //create new parking slot
         area.id = "" //need to set something because of lateinit. anyway it should be overridden
+
         val slot = ParkingSlot()
         slot.areaId = area.id
         slot.desc = "038"
         slot.name = "Dave"
-        slot.owner=username
+        slot.owner=user.login
         slot.id = ""
 
         val slotResource = ParkingSlotResource()

@@ -56,6 +56,7 @@ class ExampleDataInserter : CommandLineRunner {
     var parkingArea2 = ParkingArea()
     var parkingArea25 = ParkingArea()
     var parkingArea3 = ParkingArea()
+    var parkingArea4 = ParkingArea()
     val slot = ParkingSlot()
     val slot2 = ParkingSlot()
     val slot3 = ParkingSlot()
@@ -97,6 +98,9 @@ class ExampleDataInserter : CommandLineRunner {
 
         parkingArea3.name = "-3"
         parkingAreaRepo.insert(parkingArea3)
+
+        parkingArea4.name = "P4"
+        parkingAreaRepo.insert(parkingArea4)
     }
 
     fun insertParkingSlots() {
@@ -105,19 +109,19 @@ class ExampleDataInserter : CommandLineRunner {
         slot.name = "1"
         slot.areaId = parkingArea2.id
         slot.desc = "JL"
-        slot.owner="mila"
+        slot.owner=user.login
         parkingSlotRepo.insert(slot)
 
 
         slot2.name = "68"
         slot2.desc = "Pat"
-        slot2.owner="mila"
+        slot2.owner=user.login
         slot2.areaId = parkingArea25.id
         parkingSlotRepo.insert(slot2)
 
         slot3.name = "42"
         slot3.desc = "Ford"
-        slot3.owner="admin"
+        slot3.owner=adminUser.login
         slot3.areaId = parkingArea3.id
         parkingSlotRepo.insert(slot3)
 

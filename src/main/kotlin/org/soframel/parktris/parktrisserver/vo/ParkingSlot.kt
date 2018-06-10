@@ -8,6 +8,6 @@ class ParkingSlot(){
     var id: String?=null
     var name: String?=""
     var desc: String?=""
-    var areaId: String?=""
+    var areaId: String?=null
     var owner: String?=null
 }

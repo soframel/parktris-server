@@ -34,8 +34,8 @@ class FongoLoadsPropertlyTest : AbstractFongoTest() {
 
     @Test
     fun testSimpleInsert() {
-        parkingAreaRepository.count()
+        var count=parkingAreaRepository.count()
         parkingAreaRepository.insert(ParkingArea())
-        assert(parkingAreaRepository.count() == 1L)
+        assert(parkingAreaRepository.count() == 1L+count)
     }
 }
