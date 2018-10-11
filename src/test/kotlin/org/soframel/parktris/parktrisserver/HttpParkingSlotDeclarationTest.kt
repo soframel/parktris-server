@@ -1,6 +1,5 @@
 package org.soframel.parktris.parktrisserver
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.restassured.RestAssured
 import org.junit.Before
 import org.junit.Test
@@ -18,23 +17,14 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import java.util.*
 import org.springframework.core.ParameterizedTypeReference
-import org.springframework.hateoas.MediaTypes
-import org.springframework.hateoas.Resources
-import org.springframework.hateoas.client.Traverson
 import java.net.URI
 import org.soframel.parktris.parktrisserver.repositories.ParkingSlotRepository
 import org.soframel.parktris.parktrisserver.vo.ParkingSlot
-import org.soframel.parktris.parktrisserver.vo.wrapped.ParkingAreaResource
-import org.springframework.http.HttpHeaders
 import org.springframework.web.client.RestTemplate
-import org.springframework.http.HttpMethod
-import org.soframel.parktris.parktrisserver.vo.wrapped.ParkingSlotResource
-import org.springframework.hateoas.Resource
-import org.springframework.http.HttpEntity
-import org.springframework.http.MediaType
-import java.util.HashMap
-import javax.validation.constraints.AssertTrue
+import org.springframework.http.*
 import kotlin.test.assertEquals
+import org.springframework.http.HttpMethod
+import kotlin.test.assertTrue
 
 
 @ActiveProfiles("test")
@@ -108,7 +98,8 @@ class HttpParkingSlotDeclarationTest : AbstractFongoTest() {
     }
 
     /*Test creation of a parkingSpot.*/
-    @Test
+    //Version for Hateoas ...removed for now (sorry, came when removing Rest Repositories)
+    /*@Test
     fun testDeclareParkingSlot() {
 
         //get all areas from HTTP call
@@ -153,6 +144,72 @@ class HttpParkingSlotDeclarationTest : AbstractFongoTest() {
                 .withHeaders(getHttpHeaders(username, password))
                 .toObject(object : ParameterizedTypeReference<Resource<ParkingSlotResource>>() {})
         assertEquals(davesSlot.content.parkingSlot.desc, "038");
+
+    }*/
+
+    /**
+     * version without HATEOAS
+     */
+    @Test
+    fun testDeclareParkingSlot() {
+
+        //get all areas from HTTP call
+        var restTemplate = RestTemplate()
+        var areaUri=URI(serverUrl+"/areas")
+        var headers=getHttpHeaders(username, password)
+        var areaReq = HttpEntity<List<ParkingArea>>(headers)
+        val areasListType = object: ParameterizedTypeReference<List<ParkingArea>>(){}
+        var areaResponse = restTemplate.exchange(
+                areaUri,
+                HttpMethod.GET,
+                areaReq,
+                areasListType
+        );
+        val allAreas =areaResponse.body
+
+        //first area
+        var area=allAreas.get(0)
+
+        //create new parking slot
+        area.id = "" //need to set something because of lateinit. anyway it should be overridden
+
+        val slot = ParkingSlot()
+        slot.areaId = area.id
+        slot.desc = "038"
+        slot.name = "Dave"
+        slot.owner=user.login
+        slot.id = ""
+
+
+        var slotsUri=URI(serverUrl+"/slots")
+        var slotReq = HttpEntity<ParkingSlot>(slot, headers)
+        var response = restTemplate.exchange(
+                slotsUri,
+                HttpMethod.POST,
+                slotReq,
+                String::class.java
+        )
+
+
+        //check that the slot is there
+        var slotsUri2=URI(serverUrl+"/slots?owner="+user.login)
+        var slotReq2 = HttpEntity<Void>(headers)
+        val slotsListType = object: ParameterizedTypeReference<List<ParkingSlot>>(){}
+        var resp2 = restTemplate.exchange(
+                slotsUri2,
+                HttpMethod.GET,
+                slotReq2,
+                slotsListType
+        )
+        val allSlots =resp2.body
+        var found=false;
+        for(slot in allSlots){
+            if(slot.name=="Dave"){
+                found=true;
+                assertEquals("038", slot.desc)
+            }
+        }
+        assertTrue(found);
 
     }
 
