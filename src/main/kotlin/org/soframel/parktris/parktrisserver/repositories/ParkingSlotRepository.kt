@@ -7,14 +7,8 @@ import org.springframework.data.repository.query.Param
 import org.springframework.data.rest.core.annotation.RepositoryRestResource
 import org.springframework.security.access.prepost.PreAuthorize
 
-@RepositoryRestResource(collectionResourceRel = "parkingSlot", path = "parkingSlot")
 interface ParkingSlotRepository : MongoRepository<ParkingSlot, String> {
     fun findByName(@Param("name") name: String): ParkingSlot
     fun findAllByIdIsNotNull(): List<ParkingSlot>
-
-    @PreAuthorize("#owner == principal.username")
     fun findAllByOwner(@Param("owner") owner: String): List<ParkingSlot>
-
-    @PreAuthorize("#slot.owner == principal.username ")
-    override fun <S : ParkingSlot?> save(@Param("slot") s: S): S
 }

@@ -5,7 +5,6 @@ import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.data.repository.query.Param
 import org.springframework.data.rest.core.annotation.RepositoryRestResource
 
-@RepositoryRestResource( exported = false)
 interface UserRepository : MongoRepository<User, String> {
 
     fun findAllByIdIsNotNull(): List<User>
