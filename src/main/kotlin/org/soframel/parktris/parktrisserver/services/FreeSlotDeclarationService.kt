@@ -22,47 +22,44 @@ class FreeSlotDeclarationService {
     @Autowired
     lateinit var userRepo: UserRepository
 
+    fun isDeclValid(decl: FreeSlotDeclaration): Boolean{
+        var start=decl.startDate
+        var end=decl.endDate
+        return (start!=null && end!=null && (start.isEqual(end) || start.isBefore(end)))
+        && decl.slotId!=null;
+    }
+
     @PostMapping(value = "/declarations", produces = ["application/json"])
     fun createFreeSlotDeclaration(@RequestBody decl: FreeSlotDeclaration, principal: Principal): ResponseEntity<FreeSlotDeclaration> {
         var user = userRepo.findByLogin(principal.name)
         if (user != null) {
             logger.debug("storing declaration "+decl)
-            var start=decl.startDate
-            var end=decl.endDate
-            if(start!=null && end!=null && (start.isEqual(end) || start.isBefore(end))){
+            if(isDeclValid(decl)){
                 decl.owner = user.login
                 var result = freeSlotDeclRepo.save(decl)
                 logger.debug("creating declaration")
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
             else{
-                logger.error("problem with start and end date, start=$start , end=$end")
+                logger.error("problem with validity, decl=$decl")
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
             }
         } else {
             logger.error("no user found for storing declaration")
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
         }
-
     }
 
     @PreAuthorize("#owner == principal.username")
     @GetMapping(value = "/declarations", produces= ["application/json"])
     fun getDeclarationsFromOwner(@RequestParam("owner") owner: String, principal: Principal): ResponseEntity<List<FreeSlotDeclaration>> {
         var user = userRepo.findByLogin(principal.name)
-        if (user != null) {
-            var userId=user.id
-            if(userId!=null) {
+        if (user != null && user.login==owner) {
                 logger.debug("listing declarations for user"+principal.name)
-                var result = freeSlotDeclRepo.findAllByOwner(userId)
+                var result = freeSlotDeclRepo.findAllByOwner(principal.name)
                 return ResponseEntity.status(HttpStatus.OK).body(result);
-            }
-            else {
-                logger.error("no user id found")
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
-            }
         } else {
-            logger.error("no user found")
+            logger.error("no user found, or wrong user")
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
         }
     }
