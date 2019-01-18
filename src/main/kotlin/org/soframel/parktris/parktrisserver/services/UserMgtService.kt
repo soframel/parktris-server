@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
+import java.security.Principal
 
 @RestController
 class UserMgtService{
@@ -26,6 +27,19 @@ class UserMgtService{
     @RequestMapping(value="/userMgt/{login}", method = arrayOf(RequestMethod.GET))
     fun findByLogin(@PathVariable login: String): User{
         return userRepo.findByLogin(login)
+    }
+
+
+    @RequestMapping(value="/users/wantSlot", method = arrayOf(RequestMethod.GET))
+    fun doesUserWantSlot(principal: Principal): Boolean{
+        val user=userRepo.findByLogin(principal.name)
+        return user.wantSlot
+    }
+    @RequestMapping(value="/users/wantSlot", method = arrayOf(RequestMethod.POST))
+    fun setUserWantSlot(@RequestParam want: Boolean, principal: Principal){
+        val user=userRepo.findByLogin(principal.name)
+        user.wantSlot=want
+        userRepo.save(user)
     }
 
     @PreAuthorize("hasRole('ADMIN')")

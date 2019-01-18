@@ -20,4 +20,9 @@ class FreeSlotDeclaration() {
     var startDate: LocalDate?=null
     var endDate: LocalDate?=null
     var preferedTenant: MutableList<String>?=null
+    override fun toString(): String {
+        return "FreeSlotDeclaration(id=$id, owner=$owner, slotId=$slotId, startDate=$startDate, endDate=$endDate, preferedTenant=$preferedTenant)"
+    }
+
+
 }

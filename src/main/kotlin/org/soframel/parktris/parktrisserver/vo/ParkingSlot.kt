@@ -10,4 +10,9 @@ class ParkingSlot(){
     var desc: String?=""
     var areaId: String?=null
     var owner: String?=null
+    override fun toString(): String {
+        return "ParkingSlot(id=$id, name=$name, desc=$desc, areaId=$areaId, owner=$owner)"
+    }
+
+
 }

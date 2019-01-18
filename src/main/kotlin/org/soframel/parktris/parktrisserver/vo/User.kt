@@ -18,8 +18,11 @@ class User  {
     var password: String?=""
 
     var enabled: Boolean=false
+
+    var wantSlot: Boolean=false
+
     override fun toString(): String {
-        return "User(id='$id', login='$login', email='$email', fullName='$fullName', password='$password', enabled=$enabled)"
+        return "User(id='$id', login='$login', email='$email', fullName='$fullName', enabled=$enabled, wantSlot=$wantSlot)"
     }
 
 

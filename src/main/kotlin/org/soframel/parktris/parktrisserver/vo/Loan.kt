@@ -11,4 +11,9 @@ class Loan () {
     var slotId: String?=null
     var startDate: LocalDate?=null
     var endDate: LocalDate?=null
+    override fun toString(): String {
+        return "Loan(id=$id, owner=$owner, tenant=$tenant, slotId=$slotId, startDate=$startDate, endDate=$endDate)"
+    }
+
+
 }
