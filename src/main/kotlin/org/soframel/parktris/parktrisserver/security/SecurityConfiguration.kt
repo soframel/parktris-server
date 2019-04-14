@@ -29,6 +29,7 @@ class SecurityConfiguration : WebSecurityConfigurerAdapter() {
         //http.httpBasic()
         http.csrf().disable()
         http.authorizeRequests().antMatchers("/**").hasRole("BASIC").and().httpBasic();
+        http.cors(); //disable authentication for CORS preflight OPTIONS calls
     }
 
     @Throws(Exception::class)
