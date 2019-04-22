@@ -77,21 +77,23 @@ class ParkingSlotService {
     }
 
     @PutMapping(value = "/slots/{id}", produces = ["application/json"])
-    fun updateParkingSlot(@PathVariable("id") id: String, @RequestBody slot: ParkingSlot, pincipal: Principal): ResponseEntity<ParkingSlot> {
-        var user = userRepo.findByLogin(pincipal.name)
+    fun updateParkingSlot(@PathVariable("id") id: String, @RequestBody slot: ParkingSlot, principal: Principal): ResponseEntity<ParkingSlot> {
+        logger.debug("updating slot "+id+" for user "+principal.name+", slot="+slot);
+        var user = userRepo.findByLogin(principal.name)
         if (user != null) {
-            var decl=parkingSlotRepo.findOne(id)
-            if(decl==null){
+            var s=parkingSlotRepo.findOne(id)
+            if(s==null){
                 return return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
             }
             else{
-                if(decl.owner!=user.login){
+                if(s.owner!=user.login){
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
                 }
                 else{
-                    decl.id=id
-                    decl=parkingSlotRepo.save(decl);
-                    return ResponseEntity.status(HttpStatus.OK).body(decl);
+                    slot.id=id
+                    var result=parkingSlotRepo.save(slot);
+                    logger.debug("updated slot: "+result)
+                    return ResponseEntity.status(HttpStatus.OK).body(result);
                 }
             }
         } else {
