@@ -29,19 +29,6 @@ class UserMgtService{
         return userRepo.findByLogin(login)
     }
 
-
-    @RequestMapping(value="/users/wantSlot", method = arrayOf(RequestMethod.GET))
-    fun doesUserWantSlot(principal: Principal): Boolean{
-        val user=userRepo.findByLogin(principal.name)
-        return user.wantSlot
-    }
-    @RequestMapping(value="/users/wantSlot", method = arrayOf(RequestMethod.POST))
-    fun setUserWantSlot(@RequestParam want: Boolean, principal: Principal){
-        val user=userRepo.findByLogin(principal.name)
-        user.wantSlot=want
-        userRepo.save(user)
-    }
-
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value="/userMgt/enableUser/{login}", method = arrayOf(RequestMethod.PUT))
     fun enableUser(@PathVariable login: String): ResponseEntity<String>{
@@ -71,6 +58,31 @@ class UserMgtService{
             user.enabled=false
             userRepo.insert(user)
             return ResponseEntity.status(HttpStatus.OK).body("User with login ${user.login} created. It must now be enabled by an administrator")
+        }
+    }
+
+    /** Want Slot **/
+
+    @RequestMapping(value="/users/wantSlot/{login}", method = arrayOf(RequestMethod.GET))
+    fun doesUserWantSlot(@PathVariable login: String, principal: Principal): ResponseEntity<Boolean>{
+        if(login==null || !login.equals(principal.name)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false)
+        }
+        else {
+            val user = userRepo.findByLogin(principal.name)
+            return  ResponseEntity.status(HttpStatus.OK).body(user.wantSlot)
+        }
+    }
+    @RequestMapping(value="/users/wantSlot/{login}", method = arrayOf(RequestMethod.PUT))
+    fun setUserWantSlot(@PathVariable login: String, @RequestParam want: Boolean, principal: Principal): ResponseEntity<Void>{
+        if(login==null || !login.equals(principal.name)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+        }
+        else {
+            val user = userRepo.findByLogin(principal.name)
+            user.wantSlot = want
+            userRepo.save(user)
+            return  ResponseEntity.status(HttpStatus.OK).build()
         }
     }
 }
