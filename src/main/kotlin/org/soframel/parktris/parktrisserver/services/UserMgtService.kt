@@ -79,10 +79,11 @@ class UserMgtService{
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
         }
         else {
+            logger.info("setUserWantSlot for "+principal.name+" to "+want);
             val user = userRepo.findByLogin(principal.name)
             user.wantSlot = want
             userRepo.save(user)
-            return  ResponseEntity.status(HttpStatus.OK).build()
+            return  ResponseEntity.status(HttpStatus.NO_CONTENT).build()
         }
     }
 }
