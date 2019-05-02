@@ -8,6 +8,7 @@ class Loan () {
     var id: String?=null
     var owner: String?=null
     var tenant: String?=null
+    var declId: String?=null
     var slotId: String?=null
     var startDate: LocalDate?=null
     var endDate: LocalDate?=null

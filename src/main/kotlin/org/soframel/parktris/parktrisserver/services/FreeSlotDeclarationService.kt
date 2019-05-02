@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import java.security.Principal
+import java.util.*
 
 @RestController
 class FreeSlotDeclarationService {
@@ -60,6 +61,33 @@ class FreeSlotDeclarationService {
                 return ResponseEntity.status(HttpStatus.OK).body(result);
         } else {
             logger.error("no user found, or wrong user")
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
+        }
+    }
+
+    @PreAuthorize("#owner == principal.username")
+    @GetMapping(value = "/declarations/future", produces= ["application/json"])
+    fun getFutureDeclarationsFromOwner(@RequestParam("owner") owner: String, principal: Principal): ResponseEntity<List<FreeSlotDeclaration>> {
+        var user = userRepo.findByLogin(principal.name)
+        if (user != null && user.login==owner) {
+            logger.debug("listing future declarations for user"+principal.name)
+            var result = freeSlotDeclRepo.findFutureByOwner(principal.name, Date())
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        } else {
+            logger.error("no user found, or wrong user")
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
+        }
+    }
+
+    @GetMapping(value = "/declarations/available", produces= ["application/json"])
+    fun findAvailableDeclarations(principal: Principal): ResponseEntity<List<FreeSlotDeclaration>> {
+        var user = userRepo.findByLogin(principal.name)
+        if (user != null) {
+            var result = freeSlotDeclRepo.findAllAvailableFreeSlotsBeforeDate(Date())
+            logger.debug("listing available declarations, found "+result.size)
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        } else {
+            logger.error("no user found")
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
         }
     }
