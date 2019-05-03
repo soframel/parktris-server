@@ -1,6 +1,7 @@
 package org.soframel.parktris.parktrisserver
 
 import org.apache.log4j.Logger
+import org.soframel.parktris.parktrisserver.logic.FreeSlotDeclarationLogic
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -12,9 +13,6 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
-
-
-
 
 @SpringBootApplication
 @EnableMongoRepositories
@@ -37,6 +35,11 @@ class ParktrisServerApplication: SpringBootServletInitializer() {
                 registry!!.addMapping("/**").allowedOrigins(allowedOrigins).allowedMethods("GET","POST","PUT","DELETE","OPTIONS")
             }
         }
+    }
+
+    @Bean
+    fun getFreeSlotDeclarationLogic(): FreeSlotDeclarationLogic{
+        return FreeSlotDeclarationLogic()
     }
 
 }

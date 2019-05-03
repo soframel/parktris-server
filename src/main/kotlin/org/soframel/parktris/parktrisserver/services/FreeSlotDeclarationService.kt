@@ -1,7 +1,9 @@
 package org.soframel.parktris.parktrisserver.services
 
 import org.apache.log4j.Logger
+import org.soframel.parktris.parktrisserver.logic.FreeSlotDeclarationLogic
 import org.soframel.parktris.parktrisserver.repositories.FreeSlotDeclarationRepository
+import org.soframel.parktris.parktrisserver.repositories.LoanRepository
 import org.soframel.parktris.parktrisserver.repositories.UserRepository
 import org.soframel.parktris.parktrisserver.vo.FreeSlotDeclaration
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,6 +12,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import java.security.Principal
+import java.time.LocalDate
 import java.util.*
 
 @RestController
@@ -21,7 +24,13 @@ class FreeSlotDeclarationService {
     lateinit var freeSlotDeclRepo: FreeSlotDeclarationRepository
 
     @Autowired
+    lateinit var loanRepo: LoanRepository
+
+    @Autowired
     lateinit var userRepo: UserRepository
+
+    @Autowired
+    lateinit var declLogic: FreeSlotDeclarationLogic
 
     fun isDeclValid(decl: FreeSlotDeclaration): Boolean{
         var start=decl.startDate
@@ -84,6 +93,7 @@ class FreeSlotDeclarationService {
         var user = userRepo.findByLogin(principal.name)
         if (user != null) {
             var result = freeSlotDeclRepo.findAllAvailableFreeSlotsBeforeDate(Date())
+            result=declLogic.removeNotAvailableDeclarations(result)
             logger.debug("listing available declarations, found "+result.size)
             return ResponseEntity.status(HttpStatus.OK).body(result);
         } else {
