@@ -8,7 +8,7 @@ import org.springframework.data.annotation.Id
 import java.time.LocalDate
 import kotlin.reflect.KClass
 
-class FreeSlotDeclaration() {
+open class FreeSlotDeclaration() {
     @Id
     var id: String?=null
     var owner: String?=null
