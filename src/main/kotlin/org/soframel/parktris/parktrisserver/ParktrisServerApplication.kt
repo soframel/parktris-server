@@ -1,25 +1,25 @@
 package org.soframel.parktris.parktrisserver
 
-import org.apache.log4j.Logger
+import org.slf4j.LoggerFactory
 import org.soframel.parktris.parktrisserver.logic.FreeSlotDeclarationLogic
 import org.soframel.parktris.parktrisserver.logic.LoanLogic
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.builder.SpringApplicationBuilder
-import org.springframework.boot.web.support.SpringBootServletInitializer
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
 import org.springframework.web.servlet.config.annotation.CorsRegistry
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 @SpringBootApplication
 @EnableMongoRepositories
 @Configuration
 class ParktrisServerApplication: SpringBootServletInitializer() {
-    var appLogger = Logger.getLogger(ParktrisServerApplication::class.java)
+    var appLogger = LoggerFactory.getLogger(ParktrisServerApplication::class.java)
 
     override fun configure(application: SpringApplicationBuilder): SpringApplicationBuilder {
         return application.sources(ParktrisServerApplication::class.java!!)

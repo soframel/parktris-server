@@ -13,13 +13,16 @@ open class FreeSlotDeclaration() {
     var id: String?=null
     var owner: String?=null
     var slotId: String?=null
-
+    var preferedTenant: MutableList<String>?=null
 
     @JsonDeserialize(using =LocalDateDeserializer::class)
     @JsonSerialize(using = LocalDateSerializer::class)
     var startDate: LocalDate?=null
+
+    @JsonDeserialize(using =LocalDateDeserializer::class)
+    @JsonSerialize(using = LocalDateSerializer::class)
     var endDate: LocalDate?=null
-    var preferedTenant: MutableList<String>?=null
+
     override fun toString(): String {
         return "FreeSlotDeclaration(id=$id, owner=$owner, slotId=$slotId, startDate=$startDate, endDate=$endDate, preferedTenant=$preferedTenant)"
     }

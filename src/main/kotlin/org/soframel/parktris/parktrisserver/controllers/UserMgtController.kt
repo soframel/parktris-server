@@ -1,6 +1,6 @@
 package org.soframel.parktris.parktrisserver.controllers
 
-import org.apache.log4j.Logger
+import org.slf4j.LoggerFactory
 import org.soframel.parktris.parktrisserver.repositories.UserRepository
 import org.soframel.parktris.parktrisserver.security.SecurityConfiguration
 import org.soframel.parktris.parktrisserver.vo.User
@@ -14,7 +14,7 @@ import java.security.Principal
 @RestController
 class UserMgtController{
 
-    var logger = Logger.getLogger(UserMgtController::class.java)
+    var logger = LoggerFactory.getLogger(UserMgtController::class.java)
 
     @Autowired
     lateinit var secu: SecurityConfiguration
@@ -22,13 +22,13 @@ class UserMgtController{
     @Autowired
     lateinit var userRepo: UserRepository
 
-    @RequestMapping(value="/userMgt/{login}", method = arrayOf(RequestMethod.GET))
+    @RequestMapping(value=["/userMgt/{login}"], method = arrayOf(RequestMethod.GET))
     fun findByLogin(@PathVariable login: String): User{
         return userRepo.findByLogin(login)
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value="/userMgt/enableUser/{login}", method = arrayOf(RequestMethod.PUT))
+    @RequestMapping(value=["/userMgt/enableUser/{login}"], method = arrayOf(RequestMethod.PUT))
     fun enableUser(@PathVariable login: String): ResponseEntity<String>{
           var user=userRepo.findByLogin(login)
         if(user!=null){
@@ -41,7 +41,7 @@ class UserMgtController{
         }
     }
 
-    @RequestMapping(value="/unauth/user", method=arrayOf(RequestMethod.POST))
+    @RequestMapping(value=["/unauth/user"], method=arrayOf(RequestMethod.POST))
     fun createUser(@RequestBody user: User): ResponseEntity<String>{
         logger.info("creating user ${user}")
         if(user.login==null){
@@ -61,7 +61,7 @@ class UserMgtController{
 
     /** Want Slot **/
 
-    @RequestMapping(value="/users/wantSlot/{login}", method = arrayOf(RequestMethod.GET))
+    @RequestMapping(value=["/users/wantSlot/{login}"], method = arrayOf(RequestMethod.GET))
     fun doesUserWantSlot(@PathVariable login: String, principal: Principal): ResponseEntity<Boolean>{
         if(login==null || !login.equals(principal.name)){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false)
@@ -71,7 +71,7 @@ class UserMgtController{
             return  ResponseEntity.status(HttpStatus.OK).body(user.wantSlot)
         }
     }
-    @RequestMapping(value="/users/wantSlot/{login}", method = arrayOf(RequestMethod.PUT))
+    @RequestMapping(value=["/users/wantSlot/{login}"], method = arrayOf(RequestMethod.PUT))
     fun setUserWantSlot(@PathVariable login: String, @RequestParam want: Boolean, principal: Principal): ResponseEntity<Void>{
         if(login==null || !login.equals(principal.name)){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()

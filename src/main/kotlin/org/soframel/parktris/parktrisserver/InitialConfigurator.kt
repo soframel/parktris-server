@@ -1,6 +1,7 @@
 package org.soframel.parktris.parktrisserver
 
-import org.apache.log4j.Logger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.soframel.parktris.parktrisserver.repositories.UserRepository
 import org.soframel.parktris.parktrisserver.security.SecurityConfiguration
 import org.soframel.parktris.parktrisserver.security.UserDetailsService
@@ -14,7 +15,7 @@ import java.util.Random
 @Component
 class InitialConfigurator {
 
-    var logger = Logger.getLogger(InitialConfigurator::class.java)
+    var logger = LoggerFactory.getLogger(InitialConfigurator::class.java)
 
     @Autowired
     lateinit var userRepo: UserRepository

@@ -1,6 +1,6 @@
 package org.soframel.parktris.parktrisserver
 
-import org.apache.log4j.Logger
+import org.slf4j.LoggerFactory
 import org.soframel.parktris.parktrisserver.repositories.ParkingAreaRepository
 import org.soframel.parktris.parktrisserver.repositories.ParkingSlotRepository
 import org.soframel.parktris.parktrisserver.repositories.UserRepository
@@ -10,10 +10,7 @@ import org.soframel.parktris.parktrisserver.vo.ParkingArea
 import org.soframel.parktris.parktrisserver.vo.ParkingSlot
 import org.soframel.parktris.parktrisserver.vo.User
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.ApplicationArguments
-import org.springframework.boot.ApplicationRunner
 import org.springframework.boot.CommandLineRunner
-import org.springframework.boot.SpringApplication
 import org.springframework.stereotype.Component
 
 
@@ -26,7 +23,7 @@ import org.springframework.stereotype.Component
  */
 @Component
 class ExampleDataInserter : CommandLineRunner {
-    var logger = Logger.getLogger(ExampleDataInserter::class.java)
+    var logger = LoggerFactory.getLogger(ExampleDataInserter::class.java)
 
     override fun run(vararg args: String?) {
         if (args != null && args.contains("exampleData")) {

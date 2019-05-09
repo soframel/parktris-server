@@ -13,7 +13,7 @@ class ParkingAreaController {
     @Autowired
     lateinit var parkingAreaRepository: ParkingAreaRepository
 
-    @GetMapping(value = "/areas", produces= ["application/json"])
+    @GetMapping(value = ["/areas"], produces= ["application/json"])
     fun getDeclarationsFromOwner(principal: Principal): ResponseEntity<List<ParkingArea>> {
 
                 var result = parkingAreaRepository.findAllByIdIsNotNull();

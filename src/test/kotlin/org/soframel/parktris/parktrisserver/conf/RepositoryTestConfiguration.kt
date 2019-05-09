@@ -5,6 +5,7 @@ import com.lordofthejars.nosqlunit.mongodb.MongoDbConfiguration
 import com.lordofthejars.nosqlunit.mongodb.SpringMongoDbRule
 import com.mongodb.MockMongoClient
 import com.mongodb.Mongo
+import com.mongodb.MongoClient
 import org.soframel.parktris.parktrisserver.ParktrisServerApplication
 import org.soframel.parktris.parktrisserver.repositories.ParkingAreaRepository
 import org.springframework.context.annotation.Bean
@@ -26,6 +27,7 @@ import org.springframework.core.env.Environment
 @PropertySource("classpath:application.properties")
 class RepositoryTestConfiguration : AbstractMongoConfiguration() {
 
+
     @Autowired
     lateinit var env: Environment
 
@@ -34,8 +36,8 @@ class RepositoryTestConfiguration : AbstractMongoConfiguration() {
     }
 
     @Bean
-    override fun mongo(): Mongo {
-        return Fongo(databaseName).getMongo()
+    override fun mongoClient(): MongoClient {
+        return Fongo(databaseName).mongo
     }
 
     override fun getMappingBasePackage(): String {

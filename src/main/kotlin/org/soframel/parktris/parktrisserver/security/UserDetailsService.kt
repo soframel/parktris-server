@@ -1,6 +1,6 @@
 package org.soframel.parktris.parktrisserver.security
 
-import org.apache.log4j.Logger
+import org.slf4j.LoggerFactory
 import org.soframel.parktris.parktrisserver.repositories.UserRepository
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service
 @Service
 class UserDetailsService : UserDetailsService, InitializingBean {
 
-    var logger = Logger.getLogger(UserDetailsService::class.java)
+    var logger = LoggerFactory.getLogger(UserDetailsService::class.java)
 
     @Autowired
     lateinit var userRepo: UserRepository

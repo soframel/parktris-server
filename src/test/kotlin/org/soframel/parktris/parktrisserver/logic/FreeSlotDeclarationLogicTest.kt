@@ -1,12 +1,12 @@
 package org.soframel.parktris.parktrisserver.logic
 
-import org.apache.log4j.Logger
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito
+import org.slf4j.LoggerFactory
 import org.soframel.parktris.parktrisserver.ParktrisServerApplication
 import org.soframel.parktris.parktrisserver.repositories.LoanRepository
 import org.soframel.parktris.parktrisserver.vo.DateInterval
@@ -27,7 +27,7 @@ import kotlin.test.assertEquals
 @DirtiesContext
 class FreeSlotDeclarationLogicTest {
 
-    var logger = Logger.getLogger(FreeSlotDeclarationLogicTest::class.java)
+    var logger = LoggerFactory.getLogger(FreeSlotDeclarationLogicTest::class.java)
 
     @Autowired
     lateinit var declLogic: FreeSlotDeclarationLogic

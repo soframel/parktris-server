@@ -1,6 +1,6 @@
 package org.soframel.parktris.parktrisserver.logic
 
-import org.apache.log4j.Logger
+import org.slf4j.LoggerFactory
 import org.soframel.parktris.parktrisserver.repositories.LoanRepository
 import org.soframel.parktris.parktrisserver.vo.DateInterval
 import org.soframel.parktris.parktrisserver.vo.DeclarationWithAvailabilities
@@ -13,7 +13,7 @@ import java.time.LocalDate
 
 class FreeSlotDeclarationLogic{
 
-    var logger= Logger.getLogger(FreeSlotDeclarationLogic::class.java)
+    var logger= LoggerFactory.getLogger(FreeSlotDeclarationLogic::class.java)
 
     operator fun LocalDate.rangeTo(other: LocalDate) = DateProgression(this, other)
 

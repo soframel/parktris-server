@@ -1,6 +1,6 @@
 package org.soframel.parktris.parktrisserver.controllers
 
-import org.apache.log4j.Logger
+import org.slf4j.LoggerFactory
 import org.soframel.parktris.parktrisserver.logic.FreeSlotDeclarationLogic
 import org.soframel.parktris.parktrisserver.repositories.FreeSlotDeclarationRepository
 import org.soframel.parktris.parktrisserver.repositories.LoanRepository
@@ -18,7 +18,7 @@ import java.util.*
 @RestController
 class FreeSlotDeclarationController {
 
-    var logger = Logger.getLogger(FreeSlotDeclarationController::class.java)
+    var logger = LoggerFactory.getLogger(FreeSlotDeclarationController::class.java)
 
     @Autowired
     lateinit var freeSlotDeclRepo: FreeSlotDeclarationRepository
@@ -39,7 +39,7 @@ class FreeSlotDeclarationController {
         && decl.slotId!=null;
     }
 
-    @PostMapping(value = "/declarations", produces = ["application/json"])
+    @PostMapping(value = ["/declarations"], produces = ["application/json"])
     fun createFreeSlotDeclaration(@RequestBody decl: FreeSlotDeclaration, principal: Principal): ResponseEntity<FreeSlotDeclaration> {
         var user = userRepo.findByLogin(principal.name)
         if (user != null) {
@@ -61,7 +61,7 @@ class FreeSlotDeclarationController {
     }
 
     @PreAuthorize("#owner == principal.username")
-    @GetMapping(value = "/declarations", produces= ["application/json"])
+    @GetMapping(value = ["/declarations"], produces= ["application/json"])
     fun getDeclarationsFromOwner(@RequestParam("owner") owner: String, principal: Principal): ResponseEntity<List<FreeSlotDeclaration>> {
         var user = userRepo.findByLogin(principal.name)
         if (user != null && user.login==owner) {
@@ -75,7 +75,7 @@ class FreeSlotDeclarationController {
     }
 
     @PreAuthorize("#owner == principal.username")
-    @GetMapping(value = "/declarations/future", produces= ["application/json"])
+    @GetMapping(value = ["/declarations/future"], produces= ["application/json"])
     fun getFutureDeclarationsFromOwner(@RequestParam("owner") owner: String, principal: Principal): ResponseEntity<List<FreeSlotDeclaration>> {
         var user = userRepo.findByLogin(principal.name)
         if (user != null && user.login==owner) {
@@ -88,7 +88,7 @@ class FreeSlotDeclarationController {
         }
     }
 
-    @GetMapping(value = "/declarations/available", produces= ["application/json"])
+    @GetMapping(value = ["/declarations/available"], produces= ["application/json"])
     fun findAvailableDeclarations(principal: Principal): ResponseEntity<List<DeclarationWithAvailabilities>> {
         var user = userRepo.findByLogin(principal.name)
         if (user != null) {
@@ -103,23 +103,24 @@ class FreeSlotDeclarationController {
         }
     }
 
-    @DeleteMapping(value = "/declarations/{id}")
+    @DeleteMapping(value = ["/declarations/{id}"])
     fun deleteFreeSlotDeclaration(@PathVariable("id") id: String, principal: Principal): ResponseEntity<Void> {
         var user = userRepo.findByLogin(principal.name)
         if (user != null) {
-            var decl=freeSlotDeclRepo.findOne(id)
-            if(decl==null){
+            var decl=freeSlotDeclRepo.findById(id)
+            if(decl==null || !decl.isPresent){
                 logger.error("declaration $id not found")
                 return return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
             }
             else{
-                if(decl.owner!=user.login){
+                var decl2=decl.get()
+                if(decl2.owner!=user.login){
                     logger.error("unauthorized for user "+principal.name)
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
                 }
                 else{
                     logger.debug("deleting declaration $id")
-                    freeSlotDeclRepo.delete(id)
+                    freeSlotDeclRepo.delete(decl2)
                     return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
                 }
             }
@@ -130,25 +131,26 @@ class FreeSlotDeclarationController {
 
     }
 
-    @PutMapping(value = "/declarations/{id}", produces = ["application/json"])
+    @PutMapping(value = ["/declarations/{id}"], produces = ["application/json"])
     fun updateFreeSlotDeclaration(@PathVariable("id") id: String, @RequestBody decl: FreeSlotDeclaration, principal: Principal): ResponseEntity<FreeSlotDeclaration> {
         var user = userRepo.findByLogin(principal.name)
         if (user != null) {
-            var decl=freeSlotDeclRepo.findOne(id)
-            if(decl==null){
+            var decl=freeSlotDeclRepo.findById(id)
+            if(decl==null || !decl.isPresent){
                 logger.error("declaration $id not found")
                 return return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
             }
             else{
-                if(decl.owner!=user.login){
+                var decl2=decl.get()
+                if(decl2.owner!=user.login){
                     logger.error("unauthorized for user "+principal.name)
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
                 }
                 else{
                     logger.debug("updating declaration $id")
-                    decl.id=id
-                    decl=freeSlotDeclRepo.save(decl);
-                    return ResponseEntity.status(HttpStatus.OK).body(decl);
+                    decl2.id=id
+                    decl2=freeSlotDeclRepo.save(decl2);
+                    return ResponseEntity.status(HttpStatus.OK).body(decl2);
                 }
             }
         } else {

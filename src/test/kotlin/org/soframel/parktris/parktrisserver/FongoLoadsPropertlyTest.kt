@@ -28,7 +28,7 @@ class FongoLoadsPropertlyTest : AbstractFongoTest() {
 
     @Test
     fun testFongoLoaded() {
-        val bean = appContext.getBean("mongo")
+        val bean = appContext.getBean("mongoClient")
         assertTrue(bean is MockMongoClient)
     }
 
