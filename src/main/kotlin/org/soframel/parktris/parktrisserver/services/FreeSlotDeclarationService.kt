@@ -5,6 +5,7 @@ import org.soframel.parktris.parktrisserver.logic.FreeSlotDeclarationLogic
 import org.soframel.parktris.parktrisserver.repositories.FreeSlotDeclarationRepository
 import org.soframel.parktris.parktrisserver.repositories.LoanRepository
 import org.soframel.parktris.parktrisserver.repositories.UserRepository
+import org.soframel.parktris.parktrisserver.vo.DeclarationWithAvailabilities
 import org.soframel.parktris.parktrisserver.vo.FreeSlotDeclaration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -89,12 +90,13 @@ class FreeSlotDeclarationService {
     }
 
     @GetMapping(value = "/declarations/available", produces= ["application/json"])
-    fun findAvailableDeclarations(principal: Principal): ResponseEntity<List<FreeSlotDeclaration>> {
+    fun findAvailableDeclarations(principal: Principal): ResponseEntity<List<DeclarationWithAvailabilities>> {
         var user = userRepo.findByLogin(principal.name)
         if (user != null) {
-            var result = freeSlotDeclRepo.findAllAvailableFreeSlotsBeforeDate(Date())
-            result=declLogic.removeNotAvailableDeclarations(result)
-            logger.debug("listing available declarations, found "+result.size)
+            var decls = freeSlotDeclRepo.findAllAvailableFreeSlotsBeforeDate(Date())
+            logger.debug("listing available declarations, found "+decls.size)
+            var result=declLogic.addDeclarationAvailabilities(decls)
+            logger.debug("added availabilities")
             return ResponseEntity.status(HttpStatus.OK).body(result);
         } else {
             logger.error("no user found")

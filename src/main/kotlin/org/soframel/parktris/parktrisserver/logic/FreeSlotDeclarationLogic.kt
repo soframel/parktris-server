@@ -64,7 +64,7 @@ class FreeSlotDeclarationLogic{
                         }
                         j++
                     }
-                    if(j==size-1 && sameInterval){
+                    if(j>=size-1 && sameInterval){
                         //we finished the list
                         i=j
                         result.add(currentInterval!!)
