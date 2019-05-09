@@ -20,6 +20,7 @@ class FreeSlotDeclarationLogic{
     @Autowired
     lateinit var loanRepo: LoanRepository
 
+
     /**
      * add availabilities for each declaration + remove declarations with no availability
      */
@@ -118,5 +119,7 @@ class FreeSlotDeclarationLogic{
         }
         return dates
     }
+
+
 
 }

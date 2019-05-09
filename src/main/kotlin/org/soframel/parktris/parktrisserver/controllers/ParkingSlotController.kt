@@ -1,4 +1,4 @@
-package org.soframel.parktris.parktrisserver.services
+package org.soframel.parktris.parktrisserver.controllers
 
 import org.apache.log4j.Logger
 import org.soframel.parktris.parktrisserver.repositories.ParkingSlotRepository
@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.*
 import java.security.Principal
 
 @RestController
-class ParkingSlotService {
+class ParkingSlotController {
 
-    var logger = Logger.getLogger(ParkingSlotService::class.java)
+    var logger = Logger.getLogger(ParkingSlotController::class.java)
 
     @Autowired
     lateinit var parkingSlotRepo: ParkingSlotRepository

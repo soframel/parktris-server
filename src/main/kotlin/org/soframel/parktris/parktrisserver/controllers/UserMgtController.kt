@@ -1,7 +1,6 @@
-package org.soframel.parktris.parktrisserver.services
+package org.soframel.parktris.parktrisserver.controllers
 
 import org.apache.log4j.Logger
-import org.soframel.parktris.parktrisserver.InitialConfigurator
 import org.soframel.parktris.parktrisserver.repositories.UserRepository
 import org.soframel.parktris.parktrisserver.security.SecurityConfiguration
 import org.soframel.parktris.parktrisserver.vo.User
@@ -9,14 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
 import java.security.Principal
 
 @RestController
-class UserMgtService{
+class UserMgtController{
 
-    var logger = Logger.getLogger(UserMgtService::class.java)
+    var logger = Logger.getLogger(UserMgtController::class.java)
 
     @Autowired
     lateinit var secu: SecurityConfiguration

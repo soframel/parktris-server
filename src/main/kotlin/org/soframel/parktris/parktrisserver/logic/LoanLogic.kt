@@ -1,33 +1,27 @@
-package org.soframel.parktris.parktrisserver.services
+package org.soframel.parktris.parktrisserver.logic
 
 import org.apache.log4j.Logger
-import org.soframel.parktris.parktrisserver.repositories.FreeSlotDeclarationRepository
 import org.soframel.parktris.parktrisserver.repositories.LoanRepository
-import org.soframel.parktris.parktrisserver.repositories.UserRepository
 import org.soframel.parktris.parktrisserver.vo.FreeSlotDeclaration
 import org.soframel.parktris.parktrisserver.vo.Loan
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
-import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.web.bind.annotation.*
-import java.security.Principal
+import java.time.LocalDate
 
-@RestController
-class LoanService {
+class LoanLogic {
 
-    var logger = Logger.getLogger(LoanService::class.java)
+    var logger= Logger.getLogger(org.soframel.parktris.parktrisserver.logic.FreeSlotDeclarationLogic::class.java)
+
+    operator fun LocalDate.rangeTo(other: LocalDate) = DateProgression(this, other)
+
+
+    @Autowired
+    lateinit var declLogic: FreeSlotDeclarationLogic
 
     @Autowired
     lateinit var loanRepo: LoanRepository
 
-    @Autowired
-    lateinit var freeSlotDeclRepo: FreeSlotDeclarationRepository
 
-    @Autowired
-    lateinit var userRepo: UserRepository
-
-    fun isValidLoan(loan: Loan, user: String): Boolean{
+    fun isValidLoan(loan: Loan, decl: FreeSlotDeclaration, user: String): Boolean{
         var start=loan.startDate
         if(start==null){
             logger.error("no start date to loan")
@@ -39,16 +33,20 @@ class LoanService {
             return false
         }
 
+        //slot id
+        if(loan.slotId==null){
+            logger.error("no slotId for loan")
+            return false;
+        }
+
         //end after start
         var datesOrdered= (start!=null && end!=null && (start.isEqual(end) || start.isBefore(end)))
-                && loan.slotId!=null;
         if(!datesOrdered){
             logger.error("dates of loan are not ordered: startDate=$start, endDate=$end")
             return false;
         }
 
         //check that slot declaration exists
-        var decl=freeSlotDeclRepo.findOne(loan.declId)
         if(decl==null){
             logger.error("no matching free slot declaration found with id=${loan.declId}")
             return false;
@@ -73,30 +71,18 @@ class LoanService {
         }
 
         //check that no other loan matches the same dates & decl
-
-        return true
-    }
-
-    @PostMapping(value = "/loans", produces = ["application/json"])
-    fun createLoan(@RequestBody loan: Loan, principal: Principal): ResponseEntity<Loan> {
-        var user = userRepo.findByLogin(principal.name)
-        if (user != null) {
-            logger.debug("storing loan "+loan)
-            if(isValidLoan(loan, principal.name)){
-                loan.tenant = user.login
-                var result = loanRepo.save(loan)
-                logger.debug("creating loan")
-                return ResponseEntity.status(HttpStatus.OK).body(result);
-            }
-            else{
-                logger.error("problem with validity, loan=$loan")
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
-            }
-        } else {
-            logger.error("no user found for storing loan")
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
-        }
+        return this.checkLoanDates(decl, loan)
     }
 
 
+    fun checkLoanDates(decl: FreeSlotDeclaration, loan: Loan): Boolean{
+        var loans = loanRepo.findAllByDeclId(decl.id!!)
+        var declRange = decl.startDate!!.rangeTo(decl.endDate!!)
+        var remainingDates = declLogic.removeNonAvailableDates(declRange, loans)
+
+        //check that all loans dates are in remainingDates
+        var loanRange=loan.startDate!!.rangeTo(loan.endDate!!)
+        var notAvailableDate= loanRange.find { date -> !remainingDates.contains(date) }
+        return (notAvailableDate==null)
+    }
 }

@@ -1,20 +1,15 @@
-package org.soframel.parktris.parktrisserver.services
+package org.soframel.parktris.parktrisserver.controllers
 
-import org.soframel.parktris.parktrisserver.repositories.FreeSlotDeclarationRepository
 import org.soframel.parktris.parktrisserver.repositories.ParkingAreaRepository
-import org.soframel.parktris.parktrisserver.repositories.UserRepository
-import org.soframel.parktris.parktrisserver.vo.FreeSlotDeclaration
 import org.soframel.parktris.parktrisserver.vo.ParkingArea
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import java.security.Principal
-import javax.websocket.server.PathParam
 
 @RestController
-class ParkingAreaService {
+class ParkingAreaController {
     @Autowired
     lateinit var parkingAreaRepository: ParkingAreaRepository
 

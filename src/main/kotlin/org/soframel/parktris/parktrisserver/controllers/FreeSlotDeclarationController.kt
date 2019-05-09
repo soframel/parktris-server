@@ -1,4 +1,4 @@
-package org.soframel.parktris.parktrisserver.services
+package org.soframel.parktris.parktrisserver.controllers
 
 import org.apache.log4j.Logger
 import org.soframel.parktris.parktrisserver.logic.FreeSlotDeclarationLogic
@@ -13,13 +13,12 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import java.security.Principal
-import java.time.LocalDate
 import java.util.*
 
 @RestController
-class FreeSlotDeclarationService {
+class FreeSlotDeclarationController {
 
-    var logger = Logger.getLogger(FreeSlotDeclarationService::class.java)
+    var logger = Logger.getLogger(FreeSlotDeclarationController::class.java)
 
     @Autowired
     lateinit var freeSlotDeclRepo: FreeSlotDeclarationRepository

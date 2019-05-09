@@ -2,6 +2,7 @@ package org.soframel.parktris.parktrisserver
 
 import org.apache.log4j.Logger
 import org.soframel.parktris.parktrisserver.logic.FreeSlotDeclarationLogic
+import org.soframel.parktris.parktrisserver.logic.LoanLogic
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -40,6 +41,10 @@ class ParktrisServerApplication: SpringBootServletInitializer() {
     @Bean
     fun getFreeSlotDeclarationLogic(): FreeSlotDeclarationLogic{
         return FreeSlotDeclarationLogic()
+    }
+    @Bean
+    fun getLoanLogic(): LoanLogic{
+        return LoanLogic()
     }
 
 }
