@@ -9,7 +9,7 @@ import java.time.LocalDate
 
 class LoanLogic {
 
-    var logger= LoggerFactory.getLogger(org.soframel.parktris.parktrisserver.logic.FreeSlotDeclarationLogic::class.java)
+    var logger= LoggerFactory.getLogger(LoanLogic::class.java)
 
     operator fun LocalDate.rangeTo(other: LocalDate) = DateProgression(this, other)
 
@@ -66,8 +66,8 @@ class LoanLogic {
 
         //check that no preferred tenant, or this user is included
         var tenants=decl.preferedTenant
-        if(tenants!=null && tenants.isNotEmpty()){
-            return tenants.contains(user)
+        if(tenants!=null && tenants.isNotEmpty() && !tenants.contains(user)){
+            logger.error("tenants incorrect: slot was proposed for tenants: "+tenants)
         }
 
         //check that no other loan matches the same dates & decl
@@ -83,6 +83,7 @@ class LoanLogic {
         //check that all loans dates are in remainingDates
         var loanRange=loan.startDate!!.rangeTo(loan.endDate!!)
         var notAvailableDate= loanRange.find { date -> !remainingDates.contains(date) }
+        logger.info("notAvailableDate found in loan: "+loan+": "+notAvailableDate)
         return (notAvailableDate==null)
     }
 }

@@ -10,4 +10,6 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource
 interface LoanRepository : MongoRepository<Loan, String> {
 
     fun findAllByDeclId(@Param("declId") declId: String): List<Loan>
+
+    fun findAllByTenant(@Param("tenant") tenant: String): List<Loan>
 }

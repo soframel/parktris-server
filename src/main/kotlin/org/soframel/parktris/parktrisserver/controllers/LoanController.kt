@@ -9,9 +9,8 @@ import org.soframel.parktris.parktrisserver.vo.Loan
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.*
 import java.security.Principal
 
 @RestController
@@ -55,4 +54,45 @@ class LoanController {
     }
 
 
+    @PreAuthorize("#tenant == principal.username")
+    @GetMapping(value = ["/loans"], produces= ["application/json"])
+    fun getOwnLoans(@RequestParam("tenant") tenant: String, principal: Principal): ResponseEntity<List<Loan>> {
+        var user = userRepo.findByLogin(principal.name)
+        if (user != null && user.login==tenant) {
+            logger.debug("listing loans for user"+principal.name)
+            var result = loanRepo.findAllByTenant(principal.name)
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        } else {
+            logger.error("no user found, or wrong user")
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
+        }
+    }
+
+
+    @DeleteMapping(value = ["/loans/{id}"])
+    fun deleteLoan(@PathVariable("id") id: String, principal: Principal): ResponseEntity<Void> {
+        var user = userRepo.findByLogin(principal.name)
+        if (user != null) {
+            var loan=loanRepo.findById(id)
+            if(loan==null || !loan.isPresent){
+                logger.error("loan $id not found")
+                return return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+            }
+            else{
+                var loan2=loan.get()
+                if(loan2.tenant!=user.login){
+                    logger.error("unauthorized for user "+principal.name)
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+                }
+                else{
+                    logger.debug("deleting loan $id")
+                    loanRepo.delete(loan2)
+                    return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+                }
+            }
+        } else {
+            logger.error("no user found")
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
+        }
+    }
 }

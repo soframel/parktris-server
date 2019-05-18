@@ -128,7 +128,6 @@ class FreeSlotDeclarationController {
             logger.error("no user found")
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
         }
-
     }
 
     @PutMapping(value = ["/declarations/{id}"], produces = ["application/json"])
