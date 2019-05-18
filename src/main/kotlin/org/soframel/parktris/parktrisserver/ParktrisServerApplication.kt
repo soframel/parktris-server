@@ -34,6 +34,7 @@ class ParktrisServerApplication: SpringBootServletInitializer() {
             override fun addCorsMappings(registry: CorsRegistry?) {
                 appLogger.info("******************adding CORS mapping with allowed origins="+allowedOrigins)
                 registry!!.addMapping("/**").allowedOrigins(allowedOrigins).allowedMethods("GET","POST","PUT","DELETE","OPTIONS")
+                        .allowCredentials(true)
             }
         }
     }
