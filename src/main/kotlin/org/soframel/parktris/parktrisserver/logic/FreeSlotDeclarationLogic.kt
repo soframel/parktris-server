@@ -53,11 +53,16 @@ class FreeSlotDeclarationLogic{
                     var sameInterval=true
                     while(j<size && sameInterval){
                         var nextDate=dates[j]
-                        if(this.isNextBusinessDay(date, nextDate)){
+                        //if(this.isNextBusinessDay(date, nextDate)){
+                        if(date.plusDays(1).isEqual(nextDate)){
                             currentInterval!!.endDate=nextDate
                             date=nextDate
                         }
                         else{
+                            //add current date if needed
+                            if(currentInterval!!.endDate.plusDays(1).isEqual(date)){
+                                currentInterval!!.endDate=date
+                            }
                             sameInterval=false
                             i=j
                             result.add(currentInterval!!)
@@ -81,23 +86,6 @@ class FreeSlotDeclarationLogic{
         return result
     }
 
-    /**
-     * checks if date2 is next business day to date1.
-     * this function is inclusive of weekends: it responds true for a monday after a friday, but also for a saturday after a friday.
-     */
-    fun isNextBusinessDay(date1: LocalDate, date2: LocalDate): Boolean{
-        if(date1.plusDays(1).isEqual(date2)){
-            //simple case, no weekend
-            return true
-        }
-        else{
-            var nextDay=date1.plusDays(1)
-            var nextNextDay=nextDay.plusDays(1)
-            var thirdDay=nextNextDay.plusDays(1)
-            return (nextDay.dayOfWeek.equals(DayOfWeek.SATURDAY) && (date2.isEqual(thirdDay) || date2.isEqual(nextNextDay)))
-                    || (nextDay.dayOfWeek.equals(DayOfWeek.SUNDAY) && date2.isEqual(nextNextDay))
-        }
-    }
 
     fun removeNotAvailableDeclarations(decls: List<FreeSlotDeclaration>): List<FreeSlotDeclaration>{
         return decls.filter {
