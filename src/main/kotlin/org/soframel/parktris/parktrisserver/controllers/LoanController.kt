@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import java.security.Principal
+import java.util.*
 
 @RestController
 class LoanController {
@@ -61,6 +62,21 @@ class LoanController {
         if (user != null && user.login==tenant) {
             logger.debug("listing loans for user"+principal.name)
             var result = loanRepo.findAllByTenant(principal.name)
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        } else {
+            logger.error("no user found, or wrong user")
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
+        }
+    }
+
+
+    @PreAuthorize("#tenant == principal.username")
+    @GetMapping(value = ["/loans/future"], produces= ["application/json"])
+    fun getOwnFutureLoans(@RequestParam("tenant") tenant: String, principal: Principal): ResponseEntity<List<Loan>> {
+        var user = userRepo.findByLogin(principal.name)
+        if (user != null && user.login==tenant) {
+            logger.debug("listing future loans for user"+principal.name)
+            var result = loanRepo.findFutureLoansByTenant(Date(), principal.name)
             return ResponseEntity.status(HttpStatus.OK).body(result);
         } else {
             logger.error("no user found, or wrong user")

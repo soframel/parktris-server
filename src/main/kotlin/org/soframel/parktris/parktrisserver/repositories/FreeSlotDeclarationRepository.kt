@@ -14,9 +14,6 @@ interface FreeSlotDeclarationRepository : MongoRepository<FreeSlotDeclaration, S
 
     fun findAllByOwner(@Param("owner") owner: String): List<FreeSlotDeclaration>
 
-    /**
-     * TODO: also check that slot declaration is not already reserved by >=1 loans
-     */
     @Query("{\"endDate\":{ \"\$gte\": ?0}}")
     fun findAllAvailableFreeSlotsBeforeDate(date: Date): List<FreeSlotDeclaration>
 
