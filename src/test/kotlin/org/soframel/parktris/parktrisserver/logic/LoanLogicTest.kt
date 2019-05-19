@@ -4,7 +4,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.anyString
+import org.mockito.ArgumentMatchers
 import org.mockito.Mockito
 import org.slf4j.LoggerFactory
 import org.soframel.parktris.parktrisserver.ParktrisServerApplication
@@ -29,6 +29,12 @@ class LoanLogicTest {
 
     @Autowired
     lateinit var loanLogic: LoanLogic
+
+    fun initLoansRepoMock(loans: List<Loan>){
+        var loanRepo=Mockito.mock(LoanRepository::class.java)
+        loanLogic.loanRepo=loanRepo
+        Mockito.`when`(loanRepo.findAllByDeclId(ArgumentMatchers.anyString())).thenReturn(loans)
+    }
 
 
     @Test
@@ -69,13 +75,17 @@ class LoanLogicTest {
 
     @Test
     fun testIsValidLoan_Valid(){
+        this.initLoansRepoMock(emptyList())
+
         var decl=FreeSlotDeclaration()
         decl.id="42"
+        decl.slotId="1"
         decl.startDate=LocalDate.of(2019,5,4)
         decl.endDate=LocalDate.of(2019,5,6)
         decl.preferedTenant= mutableListOf<String>("toto", "titi")
         var loan=Loan()
-        loan.slotId="42"
+        loan.declId="42"
+        loan.slotId="1"
         loan.startDate=LocalDate.of(2019,5,4)
         loan.endDate=LocalDate.of(2019,5,6)
         assertTrue(loanLogic.isValidLoan(loan, decl, "toto"))
@@ -83,8 +93,6 @@ class LoanLogicTest {
 
     @Test
     fun testCheckLoanDatesOk(){
-        var loanRepo=Mockito.mock(LoanRepository::class.java)
-
         var loan1=Loan()
         loan1.startDate=LocalDate.of(2019,5,1)
         loan1.endDate=LocalDate.of(2019,5,5)
@@ -97,7 +105,7 @@ class LoanLogicTest {
         loan3.startDate=LocalDate.of(2019,5,22)
         loan3.endDate=LocalDate.of(2019,5,26)
         var loans= listOf<Loan>(loan1, loan2, loan3)
-        Mockito.`when`(loanRepo.findAllByDeclId(anyString())).thenReturn(loans)
+        this.initLoansRepoMock(loans)
 
         var decl=FreeSlotDeclaration()
         decl.id="42"
@@ -113,8 +121,6 @@ class LoanLogicTest {
 
     @Test
     fun testCheckLoanDatesNotOk(){
-        var loanRepo=Mockito.mock(LoanRepository::class.java)
-        loanLogic.loanRepo=loanRepo
 
         var loan1=Loan()
         loan1.startDate=LocalDate.of(2019,5,1)
@@ -128,7 +134,7 @@ class LoanLogicTest {
         loan3.startDate=LocalDate.of(2019,5,22)
         loan3.endDate=LocalDate.of(2019,5,26)
         var loans= listOf<Loan>(loan1, loan2, loan3)
-        Mockito.`when`(loanRepo.findAllByDeclId(anyString())).thenReturn(loans)
+        this.initLoansRepoMock(loans)
 
         var decl=FreeSlotDeclaration()
         decl.id="42"
